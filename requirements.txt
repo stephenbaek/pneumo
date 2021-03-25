@@ -1,0 +1,5 @@
+tensorflow
+git+https://github.com/tensorflow/examples.git
+matplotlib
+pydicom
+tqdm
