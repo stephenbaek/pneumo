@@ -30,7 +30,7 @@ def siim_to_tfrecords(siim_data_path, tfrecord_path, include_nofindings=False):
     data_path = Path(siim_data_path)
     tfrecord_path = Path(tfrecord_path)
 
-    df_rle = pd.read_csv( str(data_path / "train-rle.csv"), index_col='ImageId' )
+    df_rle = pd.read_csv(str(data_path / "train-rle.csv"), index_col="ImageId")
     dicom_paths = list(data_path.glob("dicom-images-train/*/*/*.dcm"))
 
     with tf.io.TFRecordWriter(str(tfrecord_path)) as writer:
@@ -42,7 +42,7 @@ def siim_to_tfrecords(siim_data_path, tfrecord_path, include_nofindings=False):
                 rle = df_rle.loc[index].to_numpy()
             except KeyError:
                 continue
-            
+
             # read image
             dcm = dcmread(dicom_path)
             image = dcm.pixel_array
@@ -52,9 +52,9 @@ def siim_to_tfrecords(siim_data_path, tfrecord_path, include_nofindings=False):
             for encoded in rle:
                 if not isinstance(encoded, str):
                     encoded = encoded[0]
-                if encoded.strip() != '-1':
+                if encoded.strip() != "-1":
                     mask += rle2mask(encoded, image.shape[1], image.shape[0])
-            mask = (mask.T > 0).astype(np.uint8)*255
+            mask = (mask.T > 0).astype(np.uint8) * 255
 
             # append them to the tfrecord file
             if np.sum(mask) == 0 and not include_nofindings:
@@ -73,11 +73,11 @@ def load_siim(data_path, include_nofindings=False):
         tf.data.Dataset object containing (image, mask) tuples.
     """
     data_path = Path(data_path)
-    tfrecord_path = 'siim'
+    tfrecord_path = "siim"
     if include_nofindings:
-        tfrecord_path += '_all.tfrecords'
+        tfrecord_path += "_all.tfrecords"
     else:
-        tfrecord_path += '_findings_only.tfrecords'
+        tfrecord_path += "_findings_only.tfrecords"
     tfrecord_path = data_path / tfrecord_path
 
     if not tfrecord_path.exists():

@@ -17,27 +17,33 @@
 
 import tensorflow as tf
 
+
 def random_crop(size):
     def func(image, mask):
         shape = tf.shape(image, out_type=tf.int64)
-        crop_size = tf.cast(tf.cast(shape,tf.float32)*0.9, tf.int64)
-        ymin = tf.random.uniform([], 0, shape[0]-crop_size[1], dtype=tf.int64)
-        xmin = tf.random.uniform([], 0, shape[1]-crop_size[0], dtype=tf.int64)
+        crop_size = tf.cast(tf.cast(shape, tf.float32) * 0.9, tf.int64)
+        ymin = tf.random.uniform([], 0, shape[0] - crop_size[1], dtype=tf.int64)
+        xmin = tf.random.uniform([], 0, shape[1] - crop_size[0], dtype=tf.int64)
 
         image_sliced = tf.slice(image, [ymin, xmin, 0], [crop_size[1], crop_size[0], 3])
         mask_sliced = tf.slice(mask, [ymin, xmin, 0], [crop_size[1], crop_size[0], 1])
-        
+
         return tf.image.resize(image_sliced, size), tf.image.resize(mask_sliced, size)
+
     return func
+
 
 def random_intensity(stddev):
     def func(image, mask):
         noise = tf.random.normal([], stddev=stddev, dtype=tf.float32)
         return tf.clip_by_value(image + noise, 0, 255), mask
+
     return func
+
 
 def random_noise(stddev):
     def func(image, mask):
         noise = tf.random.normal(image.shape, stddev=stddev, dtype=tf.float32)
         return tf.clip_by_value(image + noise, 0, 255), mask
+
     return func
