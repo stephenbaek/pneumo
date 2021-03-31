@@ -1,5 +1,7 @@
 tensorflow
 git+https://github.com/tensorflow/examples.git
+Augmentor
 matplotlib
 pydicom
 tqdm
+pandas
